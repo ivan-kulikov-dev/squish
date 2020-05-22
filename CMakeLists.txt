@@ -19,19 +19,42 @@ function(def_vs_filters FILE_LIST)
 	endforeach()
 endfunction(def_vs_filters)
 
-IF(SQUISH_ALTIVEC)
-     SET(SQUISH_USE_ALTIVEC 1)
+IF(${SQUISH_USE_SSE} MATCHES "SSE")
+    message("building squish to use SSE instructions")
+    SET(SQUISH_USE_SSE 1)
+	
+	# TODO enable sse
+	
+elseif(${SQUISH_USE_SSE} MATCHES "SSE2")
+    message("building squish to use SSE2 instructions")
+    SET(SQUISH_USE_SSE 2)
+	
+	if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+		add_compile_options(/arch:SSE2)
+	endif()
+	
+else()
+    message("building squish to not use SSE instructions")
+    SET(SQUISH_USE_SSE 0)
+	 
+	# TODO ???
+	 
 ENDIF()
 
-IF(${SQUISH_USE_SSE} MATCHES "SSE")
-     message("building squish to use SSE instructions")
-     SET(SQUISH_USE_SSE "1")
-elseif(${SQUISH_USE_SSE} MATCHES "SSE2")
-     message("building squish to use SSE2 instructions")
-     SET(SQUISH_USE_SSE "2")
+IF(SQUISH_ALTIVEC)
+     message("building squish to use Altivec instructions")
+	 
+	IF(${SQUISH_USE_SSE} GREATER 0)
+	     message(FATAL_ERROR "Cannot enable both Altivec and SSE!!!!!")
+	ENDIF()
+	 
+    SET(SQUISH_USE_ALTIVEC 1)
+	 
+	# TODO ???
+	 
 else()
-     message("building squish to not use SSE instructions")
-     SET(SQUISH_USE_SSE "0")
+     message("building squish to without  Altivec instructions")
+     SET(SQUISH_USE_ALTIVEC 0)
 ENDIF()
 
 configure_file("${PROJECT_SOURCE_DIR}/config.h.in" "${PROJECT_BINARY_DIR}/config.h" @ONLY)
@@ -43,6 +66,7 @@ file(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_LIST_DIR}/include/*.h"
 )
 def_vs_filters("${SRC_FILES}")
+
 add_library(${PROJ_NAME} ${LIB_TYPE} ${SRC_FILES})
 if(WIN32)
 #	target_compile_options(${PROJ_NAME} PRIVATE /wd4251)
