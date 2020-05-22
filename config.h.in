@@ -1,21 +1,12 @@
 #ifndef SQUISH_CONFIG_H
 #define SQUISH_CONFIG_H
 
-// Set to 1 when building squish to use Altivec instructions.
-#ifndef SQUISH_USE_ALTIVEC
-#cmakedefine SQUISH_USE_ALTIVEC @SQUISH_USE_ALTIVEC@ 
-#endif
-
 // Set to 1 or 2 when building squish to use SSE or SSE2 instructions.
 #ifndef SQUISH_USE_SSE
 #cmakedefine SQUISH_USE_SSE @SQUISH_USE_SSE@ 
 #endif
 
-// Internally et SQUISH_USE_SIMD when either Altivec or SSE is available.
-#if SQUISH_USE_ALTIVEC && SQUISH_USE_SSE
-#error "Cannot enable both Altivec and SSE!"
-#endif
-#if SQUISH_USE_ALTIVEC || SQUISH_USE_SSE
+#if SQUISH_USE_SSE
 #define SQUISH_USE_SIMD 1
 #else
 #define SQUISH_USE_SIMD 0

@@ -28,9 +28,7 @@
 
 #include "maths.h"
 
-#if SQUISH_USE_ALTIVEC
-#include "simd_ve.h"
-#elif SQUISH_USE_SSE
+#if SQUISH_USE_SSE
 #include "simd_sse.h"
 #else
 #include "simd_float.h"

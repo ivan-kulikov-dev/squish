@@ -6,7 +6,6 @@ project(${PROJ_NAME} CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(LIB_TYPE STATIC)
 
-option(SQUISH_ALTIVEC "Enable building squish to use Altivec instructions." OFF)
 SET(SQUISH_SSE_MODE "NOSSE" CACHE STRING "building squish to use NOSSE or SSE or SSE2 instructions")
 SET_PROPERTY(CACHE SQUISH_SSE_MODE PROPERTY STRINGS NOSSE SSE SSE2)
 
@@ -39,22 +38,6 @@ else()
 	 
 	# TODO ???
 	 
-ENDIF()
-
-IF(SQUISH_ALTIVEC)
-     message("building squish to use Altivec instructions")
-	 
-	IF(${SQUISH_USE_SSE} GREATER 0)
-	     message(FATAL_ERROR "Cannot enable both Altivec and SSE!!!!!")
-	ENDIF()
-	 
-    SET(SQUISH_USE_ALTIVEC 1)
-	 
-	# TODO ???
-	 
-else()
-     message("building squish to without  Altivec instructions")
-     SET(SQUISH_USE_ALTIVEC 0)
 ENDIF()
 
 configure_file("${PROJECT_SOURCE_DIR}/config.h.in" "${PROJECT_BINARY_DIR}/config.h" @ONLY)
