@@ -2,9 +2,14 @@ version: '{build}'
 clone_folder: c:\projects\squish
 image:
 - Visual Studio 2019
+
 configuration:
 - Release
 - Debug
+
+platform:
+- x86
+- x64
 
 matrix:
   fast_finish: true
@@ -13,12 +18,12 @@ environment:
   matrix:
   - DSQUISH_USE_ALTIVEC: OFF
     DSQUISH_USE_SSE: NOSSE
-#  - DSQUISH_USE_ALTIVEC: ON
-#    DSQUISH_USE_SSE: NOSSE
-#  - DSQUISH_USE_ALTIVEC: OFF
-#    DSQUISH_USE_SSE: SSE
-#  - DSQUISH_USE_ALTIVEC: OFF
-#    DSQUISH_USE_SSE: SSE2
+  - DSQUISH_USE_ALTIVEC: ON
+    DSQUISH_USE_SSE: NOSSE
+  - DSQUISH_USE_ALTIVEC: OFF
+    DSQUISH_USE_SSE: SSE
+  - DSQUISH_USE_ALTIVEC: OFF
+    DSQUISH_USE_SSE: SSE2
 
 init:
 - set arch=
@@ -34,9 +39,8 @@ before_build:
     mkdir build
     cd build
     cmake --version
-    cmake .. -G %generator%
-
-build:
-  project: c:\projects\squish\build\squish.sln
-  verbosity: normal
-  parallel: true
+    cmake .. -G %generator% -DCMAKE_BUILD_TYPE=%CONFIGURATION% -DSQUISH_USE_ALTIVEC=%DSQUISH_USE_ALTIVEC% -DSQUISH_USE_SSE=%DSQUISH_USE_SSE%
+    
+build_script:
+  - cd c:\projects\squish\build
+  - cmake --build . --config %CONFIGURATION%
