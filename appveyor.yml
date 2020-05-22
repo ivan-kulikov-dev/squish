@@ -1,0 +1,42 @@
+version: '{build}'
+clone_folder: c:\projects\squish
+image:
+- Visual Studio 2019
+configuration:
+- Release
+- Debug
+
+matrix:
+  fast_finish: true
+  
+environment:
+  matrix:
+  - DSQUISH_USE_ALTIVEC: OFF
+    DSQUISH_USE_SSE: NOSSE
+#  - DSQUISH_USE_ALTIVEC: ON
+#    DSQUISH_USE_SSE: NOSSE
+#  - DSQUISH_USE_ALTIVEC: OFF
+#    DSQUISH_USE_SSE: SSE
+#  - DSQUISH_USE_ALTIVEC: OFF
+#    DSQUISH_USE_SSE: SSE2
+
+init:
+- set arch=
+- if "%arch%"=="Win64" ( set arch= Win64)
+- echo %arch%
+- echo %APPVEYOR_BUILD_WORKER_IMAGE%
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" ( set generator="Visual Studio 16 2019%arch%" )
+- echo %generator%
+
+before_build:
+- cmd: |-
+    cd c:\projects\squish
+    mkdir build
+    cd build
+    cmake --version
+    cmake .. -G %generator%
+
+build:
+  project: c:\projects\squish\build\squish.sln
+  verbosity: normal
+  parallel: true
