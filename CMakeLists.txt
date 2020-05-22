@@ -10,6 +10,15 @@ option(SQUISH_ALTIVEC "Enable building squish to use Altivec instructions." OFF)
 SET(SQUISH_SSE_MODE "NOSSE" CACHE STRING "building squish to use NOSSE or SSE or SSE2 instructions")
 SET_PROPERTY(CACHE SQUISH_SSE_MODE PROPERTY STRINGS NOSSE SSE SSE2)
 
+function(def_vs_filters FILE_LIST)
+	foreach(source IN LISTS FILE_LIST)
+	    get_filename_component(source_path "${source}" PATH)
+	    string(REPLACE "${CMAKE_CURRENT_LIST_DIR}" "" source_path_relative "${source_path}")
+	    string(REPLACE "/" "\\" source_path_msvc "${source_path_relative}")
+	    source_group("${source_path_msvc}" FILES "${source}")
+	endforeach()
+endfunction(def_vs_filters)
+
 IF(SQUISH_ALTIVEC)
      SET(SQUISH_USE_ALTIVEC 1)
 ENDIF()
@@ -40,4 +49,5 @@ if(WIN32)
 #	target_compile_options(${PROJ_NAME} PRIVATE /wd4996)
 endif()
 
-
+set_target_properties(${PROJ_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(${PROJ_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
