@@ -6,8 +6,8 @@ project(${PROJ_NAME} CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(LIB_TYPE STATIC)
 
-SET(SQUISH_SSE_MODE "NOSSE" CACHE STRING "building squish to use NOSSE or SSE or SSE2 instructions")
-SET_PROPERTY(CACHE SQUISH_SSE_MODE PROPERTY STRINGS NOSSE SSE SSE2)
+SET(SQUISH_SSE_MODE "NONE" CACHE STRING "building squish to use NONE or SSE or SSE2 instructions")
+SET_PROPERTY(CACHE SQUISH_SSE_MODE PROPERTY STRINGS NONE SSE SSE2)
 
 function(def_vs_filters FILE_LIST)
 	foreach(source IN LISTS FILE_LIST)
@@ -18,20 +18,15 @@ function(def_vs_filters FILE_LIST)
 	endforeach()
 endfunction(def_vs_filters)
 
-IF(${SQUISH_USE_SSE} MATCHES "SSE")
+IF(${SQUISH_SSE_MODE} MATCHES "SSE")
     message("building squish to use SSE instructions")
     SET(SQUISH_USE_SSE 1)
 	
 	# TODO enable sse
 	
-elseif(${SQUISH_USE_SSE} MATCHES "SSE2")
+elseif(${SQUISH_SSE_MODE} MATCHES "SSE2")
     message("building squish to use SSE2 instructions")
-    SET(SQUISH_USE_SSE 2)
-	
-	if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-		add_compile_options(/arch:SSE2)
-	endif()
-	
+    SET(SQUISH_USE_SSE 2)	
 else()
     message("building squish to not use SSE instructions")
     SET(SQUISH_USE_SSE 0)
@@ -55,6 +50,14 @@ if(WIN32)
 #	target_compile_options(${PROJ_NAME} PRIVATE /wd4251)
 #	target_compile_options(${PROJ_NAME} PRIVATE /wd4996)
 endif()
+
+IF(${SQUISH_USE_SSE} EQUAL 2)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+        target_compile_options(${PROJ_NAME} INTERFACE "/arch:SSE2")
+    else()
+        target_compile_options(${PROJ_NAME} INTERFACE "-msse2")
+    endif()
+ENDIF()
 
 set_target_properties(${PROJ_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(${PROJ_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)

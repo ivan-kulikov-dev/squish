@@ -16,9 +16,9 @@ matrix:
   
 environment:
   matrix:
-  - SQUISH_SSE_MODE: NOSSE
-  - SQUISH_SSE_MODE: SSE
-  - SQUISH_SSE_MODE: SSE2
+  - DSQUISH_SSE_MODE: NONE
+  - DSQUISH_SSE_MODE: SSE
+  - DSQUISH_SSE_MODE: SSE2
 
 init:
 - set arch=
@@ -34,7 +34,7 @@ before_build:
     mkdir build
     cd build
     cmake --version
-    cmake .. -G %generator% -DSQUISH_USE_SSE=%DSQUISH_USE_SSE%
+    cmake .. -G %generator% -DSQUISH_SSE_MODE=%DSQUISH_SSE_MODE%
     dir
     
 build_script:
