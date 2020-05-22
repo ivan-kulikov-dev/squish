@@ -16,8 +16,8 @@ matrix:
   
 environment:
   matrix:
-  - DSQUISH_USE_ALTIVEC: OFF
-    DSQUISH_USE_SSE: NOSSE
+  - SQUISH_ALTIVEC: OFF
+    SQUISH_SSE_MODE: NOSSE
 #  - DSQUISH_USE_ALTIVEC: ON
 #    DSQUISH_USE_SSE: NOSSE
 #  - DSQUISH_USE_ALTIVEC: OFF
@@ -39,7 +39,8 @@ before_build:
     mkdir build
     cd build
     cmake --version
-    cmake .. -G %generator% -DCMAKE_BUILD_TYPE=%CONFIGURATION% -DSQUISH_USE_ALTIVEC=%DSQUISH_USE_ALTIVEC% -DSQUISH_USE_SSE=%DSQUISH_USE_SSE%
+    cmake .. -G %generator% -DSQUISH_USE_ALTIVEC=%DSQUISH_USE_ALTIVEC% -DSQUISH_USE_SSE=%DSQUISH_USE_SSE%
+    dir
     
 build_script:
   - cd c:\projects\squish\build
